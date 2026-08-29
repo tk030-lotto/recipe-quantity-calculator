@@ -33,4 +33,11 @@ describe('formatIngredient', () => {
     const scaled = scaleIngredient(ing, 2);
     expect(formatIngredient(scaled)).toBe('塩 少々');
   });
+
+  it('rounds decimal values to 1 decimal place', () => {
+    const ing = parseIngredientLine('玉ねぎ 1個');
+    const scaled = scaleIngredient(ing, 1.333);
+    expect(formatIngredient(scaled)).toBe('玉ねぎ 1.3個');
+  });
 });
+

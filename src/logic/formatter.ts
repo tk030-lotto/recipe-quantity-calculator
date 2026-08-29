@@ -26,8 +26,6 @@ export function formatIngredient(ingredient: Ingredient): string {
   // 小数第1位までに丸める
   const rounded = Math.round(quantity * 10) / 10;
   
-  // 単位との間にスペースを入れるかどうか
-  const hasSpace = unit && !unit.match(/^[a-zA-Z]/) && unit !== "g" && unit !== "ml" && unit !== "cc" && unit !== "kg" && unit !== "L" && unit !== "l";
-  
-  return `${name} ${rounded}${hasSpace ? " " : ""}${unit}`;
+  return `${name} ${rounded}${unit}`.trim();
 }
+

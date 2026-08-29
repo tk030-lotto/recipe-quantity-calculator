@@ -28,4 +28,10 @@ describe('parseIngredientLine', () => {
     expect(parseIngredientLine('')).toMatchObject({ isConvertible: false });
     expect(parseIngredientLine('豚肉')).toMatchObject({ isConvertible: false });
   });
+
+  it('handles uppercase units and cc', () => {
+    expect(parseIngredientLine('出汁 300CC')).toMatchObject({ name: '出汁', quantity: 300, unit: 'CC', isConvertible: true });
+    expect(parseIngredientLine('水 1L')).toMatchObject({ name: '水', quantity: 1, unit: 'L', isConvertible: true });
+  });
 });
+
