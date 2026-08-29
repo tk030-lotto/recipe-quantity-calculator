@@ -4,6 +4,9 @@
 
 ## ――人数を変えるだけで、料理に使いやすい分量に自動変換
 
+👉 **CookScale（Webツール・無料・登録不要）**
+https://tk030-lotto.github.io/recipe-quantity-calculator/
+
 料理をしていると、こんなことありませんか？
 
 「このレシピ、4人分だけど今日は2人分にしたい」
@@ -450,3 +453,14 @@ CookScaleは、
 と思ったときに、使ってみてください。
 
 **CookScale ――料理中の計算を、ちょっと楽に。**
+
+---
+
+### 🔗 リンク
+- **Webツール（ブラウザで今すぐ使えます）**: https://tk030-lotto.github.io/recipe-quantity-calculator/
+- **GitHubリポジトリ（ソースコード）**: https://github.com/tk030-lotto/recipe-quantity-calculator
+
+---
+
+#料理 #レシピ #時短 #便利ツール #Webアプリ #個人開発 #自作アプリ
+
