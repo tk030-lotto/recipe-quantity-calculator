@@ -2,7 +2,9 @@ import type { Ingredient } from "./types";
 
 export function parseIngredientLine(line: string): Ingredient {
   const trimmed = line.trim();
-  const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString();
+  const id = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') 
+    ? crypto.randomUUID() 
+    : Math.random().toString(36).substring(2);
   
   if (!trimmed) {
     return { id, originalText: "", name: "", quantity: null, unit: "", isConvertible: false };

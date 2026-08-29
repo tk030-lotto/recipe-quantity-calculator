@@ -10,12 +10,14 @@ import { formatIngredient } from './logic/formatter';
 
 function App() {
   const [recipeText, setRecipeText] = useState('');
-  const [originalServings, setOriginalServings] = useState(2);
-  const [targetServings, setTargetServings] = useState(3);
+  const [originalServings, setOriginalServings] = useState<number | ''>(2);
+  const [targetServings, setTargetServings] = useState<number | ''>(3);
 
   const results = useMemo(() => {
+    const orig = typeof originalServings === 'number' && originalServings > 0 ? originalServings : 1;
+    const targ = typeof targetServings === 'number' && targetServings > 0 ? targetServings : 1;
     const parsed = parseRecipe(recipeText);
-    const scaled = scaleRecipe(parsed, originalServings, targetServings);
+    const scaled = scaleRecipe(parsed, orig, targ);
     return scaled.map(ing => ({
       id: ing.id,
       originalText: ing.originalText,
@@ -64,7 +66,10 @@ function App() {
                   min="1"
                   className="pr-8 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
                   value={originalServings}
-                  onChange={(e) => setOriginalServings(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setOriginalServings(val === '' ? '' : Math.max(1, Number(val)));
+                  }}
                 />
                 <span className="absolute right-3 top-2.5 text-slate-400 dark:text-slate-500 text-sm">人分</span>
               </div>
@@ -86,7 +91,10 @@ function App() {
                   min="1"
                   className="pr-8 bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800 font-bold text-orange-700 dark:text-orange-300 focus:border-orange-400 dark:focus:border-orange-600 focus:ring-orange-300 dark:focus:ring-orange-900"
                   value={targetServings}
-                  onChange={(e) => setTargetServings(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTargetServings(val === '' ? '' : Math.max(1, Number(val)));
+                  }}
                 />
                 <span className="absolute right-3 top-2.5 text-orange-500 dark:text-orange-600 text-sm font-bold">人分</span>
               </div>
