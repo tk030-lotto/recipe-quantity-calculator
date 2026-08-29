@@ -175,6 +175,15 @@
 - **関連コミット**:
   - （本コミット）
 
+### 2026-08-30: リポジトリAbout欄（説明・Webサイト・トピックス）の設定
+- **変更概要**:
+  - GitHub CLI によりリポジトリの About 欄（Description, Homepage URL, Topics）を設定。
+  - Description: `🍳 レシピの人数・分量を一括再計算し、計量しやすい形式（大さじ・小さじ等）に自動変換するブラウザ完結Webツール`
+  - Homepage: `https://tk030-lotto.github.io/recipe-quantity-calculator/`
+  - Topics: `recipe`, `calculator`, `cooking`, `react`, `typescript`, `vite`, `tailwindcss`, `shadcn-ui`, `spa`
+- **関連コミット**:
+  - （本コミット）
+
 ---
 
 <!-- 運用保守フェーズのエントリはここ以降に追記 -->
