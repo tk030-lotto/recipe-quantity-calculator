@@ -30,7 +30,7 @@ export function ThemeProvider({
     () => {
       try {
         return (localStorage.getItem(storageKey) as Theme) || defaultTheme
-      } catch (error) {
+      } catch {
         return defaultTheme
       }
     }
@@ -58,12 +58,13 @@ export function ThemeProvider({
     setTheme: (theme: Theme) => {
       try {
         localStorage.setItem(storageKey, theme)
-      } catch (error) {
+      } catch {
         // ignore storage errors (e.g. quota exceeded, privacy mode)
       }
       setTheme(theme)
     },
   }
+
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
