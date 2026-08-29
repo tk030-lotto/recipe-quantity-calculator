@@ -5,18 +5,11 @@ import { Textarea } from './components/ui/textarea';
 import { Label } from './components/ui/label';
 import { Button } from './components/ui/button';
 import { ModeToggle } from './components/mode-toggle';
+import { FavoritesList, type FavoriteRecipe } from './components/favorites-list';
 import { parseRecipe } from './logic/parser';
 import { scaleRecipe } from './logic/calculator';
 import { formatIngredient } from './logic/formatter';
-import { Copy, Check, RotateCcw, BookmarkPlus, Bookmark, Trash2, ArrowRight } from 'lucide-react';
-
-interface FavoriteRecipe {
-  id: string;
-  title: string;
-  recipeText: string;
-  originalServings: number;
-  targetServings: number;
-}
+import { Copy, Check, RotateCcw, BookmarkPlus, ArrowRight } from 'lucide-react';
 
 const FAVORITES_STORAGE_KEY = 'cookscale_favorites_v1';
 
@@ -131,34 +124,12 @@ function App() {
         </CardHeader>
         
         <CardContent className="space-y-6 pt-6">
-          {/* お気に入りリスト */}
-          {favorites.length > 0 && (
-            <div className="space-y-2">
-              <Label className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <Bookmark className="w-3.5 h-3.5 text-orange-500" />
-                保存したお気に入りレシピ
-              </Label>
-              <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto p-1">
-                {favorites.map(fav => (
-                  <div
-                    key={fav.id}
-                    onClick={() => handleLoadFavorite(fav)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100/70 hover:bg-orange-200/80 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-900 dark:text-orange-200 text-xs rounded-full cursor-pointer transition-colors border border-orange-200/60 dark:border-orange-800/60 shadow-xs"
-                  >
-                    <span>{fav.title}</span>
-                    <button
-                      type="button"
-                      onClick={(e) => handleDeleteFavorite(fav.id, e)}
-                      className="text-orange-500 hover:text-red-500 dark:hover:text-red-400 p-0.5 rounded-full"
-                      title="削除"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* お気に入りリストコンポーネント */}
+          <FavoritesList
+            favorites={favorites}
+            onSelect={handleLoadFavorite}
+            onDelete={handleDeleteFavorite}
+          />
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -292,4 +263,5 @@ function App() {
 }
 
 export default App;
+
 
