@@ -52,6 +52,31 @@
   - `feat: add ツール起動.bat`
 - **進捗ステータス**: 全工程完了（進捗100%）。
 
+### 2026-08-29: 白画面不具合の修正
+- **変更概要**:
+  - TypeScriptの `verbatimModuleSyntax` 設定下で、型のみのインポートがESBuildにより誤ってランタイムコードに残存しブラウザ上で実行エラーとなる問題を解消。
+  - `import type { Ingredient }` への修正および不要インポートの削除を実施。
+- **関連コミット**:
+  - `cd518c9` (`fix: resolve blank screen issue caused by type imports`)
+
+### 2026-08-29: ダークモード対応およびテーマ切り替え機能の追加
+- **変更概要**:
+  - `ThemeProvider` および `ModeToggle`（太陽/月切り替えボタン）を実装。
+  - Tailwind CSS の `darkMode: ["class"]` を有効化し、`App.tsx` 内の配色をダークモード対応に調整。
+  - 選択テーマ状態のローカルストレージ永続化に対応。
+- **関連コミット**:
+  - `b1eb118` (`feat: add dark mode toggle and styling`)
+
+### 2026-08-29: 品質監査の実施および堅牢性の向上
+- **変更概要**:
+  - `project-quality-audit` スキル基準に基づく全コード深層監査を実施。
+  - 検出された問題（QA-001〜QA-004）を即座に修正：
+    1. `theme-provider.tsx`: `localStorage` 操作の `try-catch` 保護（プライベートブラウズ環境等でのクラッシュ防止）。
+    2. `parser.ts`: `crypto` オブジェクト存在確認の型安全化。
+    3. `App.tsx`: 人数の空欄・不正入力時のフォールバック処理強化。
+- **関連コミット**:
+  - `97f9e5e` (`fix: address audit findings QA-001 to QA-004`)
+
 ---
 
 <!-- 運用保守フェーズのエントリはここ以降に追記 -->
