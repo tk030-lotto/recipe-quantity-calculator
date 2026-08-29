@@ -2,7 +2,10 @@
 
 レシピの人数・分量を、料理中に使いやすい形へ変換する無料・登録不要のブラウザ完結Webツールです。
 
+![CookScale デモアニメーション](cookscale_demo.gif)
+
 ## コンセプト
+
 
 「レシピの計算をする」のではなく、**料理中に発生する面倒な計算・換算を、その場で簡単に片付ける**ことを目的とします。
 
@@ -43,7 +46,7 @@
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS (v3), shadcn/ui, Lucide Icons
 - **Build Tool**: Vite 6
-- **Test**: Vitest (12 tests)
+- **Test**: Vitest (15 tests)
 - **Deployment**: クライアントサイドSPA（サーバーサイド不要）
 
 ## プライバシー
