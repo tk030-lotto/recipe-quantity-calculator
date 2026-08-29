@@ -165,6 +165,16 @@
 - **関連コミット**:
   - （本コミット）
 
+### 2026-08-30: リポジトリのパブリック化およびGitHub Pagesデプロイ
+- **変更概要**:
+  - GitHub CLI によりリポジトリの可視性を `private` から `public` に変更。
+  - `.github/workflows/deploy.yml` に GitHub Pages 自動デプロイワークフローを配置。
+  - GitHub Pages サイト（Actions 経由）を有効化し、`main` ブランチへのプッシュで自動デプロイを開始。
+  - 公開URL: `https://tk030-lotto.github.io/recipe-quantity-calculator/`
+  - `README.md` に公開URLリンクを追記。
+- **関連コミット**:
+  - （本コミット）
+
 ---
 
 <!-- 運用保守フェーズのエントリはここ以降に追記 -->

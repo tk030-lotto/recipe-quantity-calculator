@@ -2,6 +2,8 @@
 
 レシピの人数・分量を、料理中に使いやすい形へ変換する無料・登録不要のブラウザ完結Webツールです。
 
+🔗 **公開URL（ブラウザで今すぐ利用可能）**: [https://tk030-lotto.github.io/recipe-quantity-calculator/](https://tk030-lotto.github.io/recipe-quantity-calculator/)
+
 ![CookScale デモアニメーション](cookscale_demo.gif)
 
 ## コンセプト
