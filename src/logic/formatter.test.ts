@@ -39,5 +39,18 @@ describe('formatIngredient', () => {
     const scaled = scaleIngredient(ing, 1.333);
     expect(formatIngredient(scaled)).toBe('玉ねぎ 1.3個');
   });
+
+  it('correctly carries over tsp to tbsp when rounded tsp is 3', () => {
+    const ing = {
+      id: 'test',
+      originalText: '醤油 大さじ1',
+      name: '醤油',
+      quantity: 0.99, // totalTsp = 2.97 -> tsp = 3 -> tbsp 1
+      unit: '大さじ',
+      isConvertible: true
+    };
+    expect(formatIngredient(ing)).toBe('醤油 大さじ1');
+  });
 });
+
 

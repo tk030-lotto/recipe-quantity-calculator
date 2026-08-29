@@ -33,5 +33,17 @@ describe('parseIngredientLine', () => {
     expect(parseIngredientLine('出汁 300CC')).toMatchObject({ name: '出汁', quantity: 300, unit: 'CC', isConvertible: true });
     expect(parseIngredientLine('水 1L')).toMatchObject({ name: '水', quantity: 1, unit: 'L', isConvertible: true });
   });
+
+  it('handles fraction quantities', () => {
+    expect(parseIngredientLine('醤油 大さじ1/2')).toMatchObject({ name: '醤油', quantity: 0.5, unit: '大さじ', isConvertible: true });
+    expect(parseIngredientLine('水 1/2カップ')).toMatchObject({ name: '水', quantity: 0.5, unit: 'カップ', isConvertible: true });
+    expect(parseIngredientLine('玉ねぎ 1/2 個')).toMatchObject({ name: '玉ねぎ', quantity: 0.5, unit: '個', isConvertible: true });
+  });
+
+  it('handles fullwidth numbers and spaces', () => {
+    expect(parseIngredientLine('鶏もも肉　３００ｇ')).toMatchObject({ name: '鶏もも肉', quantity: 300, unit: 'ｇ', isConvertible: true });
+    expect(parseIngredientLine('砂糖　大さじ２')).toMatchObject({ name: '砂糖', quantity: 2, unit: '大さじ', isConvertible: true });
+  });
 });
+
 
