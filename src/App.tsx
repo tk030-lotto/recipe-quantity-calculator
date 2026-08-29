@@ -1,17 +1,46 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Input } from './components/ui/input';
 import { Textarea } from './components/ui/textarea';
 import { Label } from './components/ui/label';
+import { Button } from './components/ui/button';
 import { ModeToggle } from './components/mode-toggle';
 import { parseRecipe } from './logic/parser';
 import { scaleRecipe } from './logic/calculator';
 import { formatIngredient } from './logic/formatter';
+import { Copy, Check, RotateCcw, BookmarkPlus, Bookmark, Trash2, ArrowRight } from 'lucide-react';
+
+interface FavoriteRecipe {
+  id: string;
+  title: string;
+  recipeText: string;
+  originalServings: number;
+  targetServings: number;
+}
+
+const FAVORITES_STORAGE_KEY = 'cookscale_favorites_v1';
 
 function App() {
   const [recipeText, setRecipeText] = useState('');
   const [originalServings, setOriginalServings] = useState<number | ''>(2);
   const [targetServings, setTargetServings] = useState<number | ''>(3);
+  const [copied, setCopied] = useState(false);
+  const [favorites, setFavorites] = useState<FavoriteRecipe[]>(() => {
+    try {
+      const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    } catch {
+      // ignore storage quota errors
+    }
+  }, [favorites]);
 
   const results = useMemo(() => {
     const orig = typeof originalServings === 'number' && originalServings > 0 ? originalServings : 1;
@@ -26,11 +55,68 @@ function App() {
     }));
   }, [recipeText, originalServings, targetServings]);
 
+  const handleCopy = async () => {
+    if (results.length === 0) return;
+    const textToCopy = results.map(r => r.formattedText).join('\n');
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(textToCopy);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Copy failed
+    }
+  };
+
+  const handleReset = () => {
+    setRecipeText('');
+    setOriginalServings(2);
+    setTargetServings(3);
+  };
+
+  const handleSaveFavorite = () => {
+    if (!recipeText.trim()) return;
+    const firstLine = recipeText.trim().split('\n')[0] || '無題のレシピ';
+    const title = window.prompt('レシピのタイトルを入力してください', firstLine.slice(0, 20)) || firstLine.slice(0, 20);
+    if (!title.trim()) return;
+
+    const newFav: FavoriteRecipe = {
+      id: (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2),
+      title: title.trim(),
+      recipeText,
+      originalServings: typeof originalServings === 'number' ? originalServings : 2,
+      targetServings: typeof targetServings === 'number' ? targetServings : 3,
+    };
+
+    setFavorites(prev => [newFav, ...prev.filter(f => f.title !== newFav.title)].slice(0, 10));
+  };
+
+  const handleLoadFavorite = (fav: FavoriteRecipe) => {
+    setRecipeText(fav.recipeText);
+    setOriginalServings(fav.originalServings);
+    setTargetServings(fav.targetServings);
+  };
+
+  const handleDeleteFavorite = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFavorites(prev => prev.filter(f => f.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4 transition-colors">
       <Card className="w-full max-w-xl mx-auto shadow-lg border-orange-100 dark:border-orange-900/50 relative overflow-hidden">
         
-        {/* ダークモードトグルを右上に配置 */}
+        {/* ダークモードトグル */}
         <div className="absolute top-4 right-4 z-10">
           <ModeToggle />
         </div>
@@ -45,12 +131,71 @@ function App() {
         </CardHeader>
         
         <CardContent className="space-y-6 pt-6">
+          {/* お気に入りリスト */}
+          {favorites.length > 0 && (
+            <div className="space-y-2">
+              <Label className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <Bookmark className="w-3.5 h-3.5 text-orange-500" />
+                保存したお気に入りレシピ
+              </Label>
+              <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto p-1">
+                {favorites.map(fav => (
+                  <div
+                    key={fav.id}
+                    onClick={() => handleLoadFavorite(fav)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100/70 hover:bg-orange-200/80 dark:bg-orange-950/50 dark:hover:bg-orange-900/60 text-orange-900 dark:text-orange-200 text-xs rounded-full cursor-pointer transition-colors border border-orange-200/60 dark:border-orange-800/60 shadow-xs"
+                  >
+                    <span>{fav.title}</span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteFavorite(fav.id, e)}
+                      className="text-orange-500 hover:text-red-500 dark:hover:text-red-400 p-0.5 rounded-full"
+                      title="削除"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="recipe" className="font-bold text-slate-700 dark:text-slate-300">レシピ（材料と分量）を貼り付け</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="recipe" className="font-bold text-slate-700 dark:text-slate-300">
+                レシピ（材料と分量）を貼り付け
+              </Label>
+              <div className="flex items-center gap-2">
+                {recipeText && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSaveFavorite}
+                    className="h-7 px-2 text-xs text-orange-600 dark:text-orange-400 hover:bg-orange-100/50 dark:hover:bg-orange-950/50"
+                  >
+                    <BookmarkPlus className="w-3.5 h-3.5 mr-1" />
+                    お気に入り保存
+                  </Button>
+                )}
+                {(recipeText || originalServings !== 2 || targetServings !== 3) && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleReset}
+                    className="h-7 px-2 text-xs text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                    クリア
+                  </Button>
+                )}
+              </div>
+            </div>
             <Textarea
               id="recipe"
               placeholder={`鶏もも肉 300g\n醤油 大さじ2\nみりん 大さじ1\n塩 少々`}
-              className="min-h-[160px] resize-y bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-orange-300 dark:focus:border-orange-700 focus:ring-orange-200 dark:focus:ring-orange-900/50"
+              className="min-h-[150px] resize-y bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-orange-300 dark:focus:border-orange-700 focus:ring-orange-200 dark:focus:ring-orange-900/50"
               value={recipeText}
               onChange={(e) => setRecipeText(e.target.value)}
             />
@@ -76,10 +221,10 @@ function App() {
             </div>
             
             <div className="hidden sm:flex flex-none pt-6 text-slate-400 dark:text-slate-600">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              <ArrowRight className="w-5 h-5" />
             </div>
             <div className="flex sm:hidden justify-center text-slate-400 dark:text-slate-600 -my-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              <ArrowRight className="w-5 h-5 rotate-90" />
             </div>
 
             <div className="flex-1 space-y-2">
@@ -104,10 +249,31 @@ function App() {
 
         {results.length > 0 && (
           <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-b-xl border-t border-slate-100 dark:border-slate-800/50">
-            <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
-              <span className="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm shadow-sm">✨</span>
-              計算結果
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <span className="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-sm shadow-sm">✨</span>
+                計算結果
+              </h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopy}
+                className="h-8 px-3 text-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-orange-50 dark:hover:bg-orange-950/50 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 mr-1.5 text-green-500" />
+                    <span className="text-green-600 dark:text-green-400 font-semibold">コピー完了</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 mr-1.5" />
+                    <span>結果をコピー</span>
+                  </>
+                )}
+              </Button>
+            </div>
             <ul className="space-y-3">
               {results.map((res) => (
                 <li key={res.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:border-orange-200 dark:hover:border-orange-800">
@@ -126,3 +292,4 @@ function App() {
 }
 
 export default App;
+
