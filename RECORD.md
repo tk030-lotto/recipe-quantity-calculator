@@ -184,6 +184,15 @@
 - **関連コミット**:
   - （本コミット）
 
+### 2026-08-30: TypeScript・GitHub ActionsスキーマエラーおよびMarkdown警告の修正
+- **変更概要**:
+  - `tsconfig.app.json`: 非推奨となった `baseUrl` および未対応の `ignoreDeprecations` を削除し、TypeScript 6.x / 7.0 移行仕様に準拠。
+  - `.github/workflows/deploy.yml`: ジョブ内のプロパティ順序（`runs-on` → `environment`）を標準フォーマットに整理し、Node.jsバージョンを22に更新。
+  - `README.md`: 「## コンセプト」直下の連続空行（MD012警告）を解消し、テスト件数表記を18件に更新。
+  - ビルド（`tsc -b && vite build`）および単体テスト（18 passed）が完全エラーフリーで通過することを確認。
+- **関連コミット**:
+  - （本コミット）
+
 ---
 
 <!-- 運用保守フェーズのエントリはここ以降に追記 -->

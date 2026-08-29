@@ -8,7 +8,6 @@
 
 ## コンセプト
 
-
 「レシピの計算をする」のではなく、**料理中に発生する面倒な計算・換算を、その場で簡単に片付ける**ことを目的とします。
 
 主な対象は、レシピの人数変更、分量倍率変更、計量単位の変換、計量しやすい表示への整形です。
@@ -48,7 +47,7 @@
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS (v3), shadcn/ui, Lucide Icons
 - **Build Tool**: Vite 6
-- **Test**: Vitest (15 tests)
+- **Test**: Vitest (18 tests)
 - **Deployment**: クライアントサイドSPA（サーバーサイド不要）
 
 ## プライバシー
