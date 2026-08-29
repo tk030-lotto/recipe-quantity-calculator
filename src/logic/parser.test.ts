@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseIngredientLine } from './parser';
+import { parseIngredientLine, parseRecipe, splitRecipeText } from './parser';
 
 describe('parseIngredientLine', () => {
   it('parses weight and volume units', () => {
@@ -43,6 +43,37 @@ describe('parseIngredientLine', () => {
   it('handles fullwidth numbers and spaces', () => {
     expect(parseIngredientLine('鶏もも肉　３００ｇ')).toMatchObject({ name: '鶏もも肉', quantity: 300, unit: 'ｇ', isConvertible: true });
     expect(parseIngredientLine('砂糖　大さじ２')).toMatchObject({ name: '砂糖', quantity: 2, unit: '大さじ', isConvertible: true });
+  });
+});
+
+describe('splitRecipeText and parseRecipe', () => {
+  it('splits multiple ingredients in a single line by space', () => {
+    const text = '鶏肉300g 醤油大さじ2';
+    expect(splitRecipeText(text)).toEqual(['鶏肉300g', '醤油大さじ2']);
+    
+    const parsed = parseRecipe(text);
+    expect(parsed).toHaveLength(2);
+    expect(parsed[0]).toMatchObject({ name: '鶏肉', quantity: 300, unit: 'g', isConvertible: true });
+    expect(parsed[1]).toMatchObject({ name: '醤油', quantity: 2, unit: '大さじ', isConvertible: true });
+  });
+
+  it('splits ingredients separated by punctuation or spaces', () => {
+    const text = '鶏肉 300g、醤油 大さじ2、みりん 大さじ1、塩 少々';
+    const parsed = parseRecipe(text);
+    expect(parsed).toHaveLength(4);
+    expect(parsed[0]).toMatchObject({ name: '鶏肉', quantity: 300, unit: 'g' });
+    expect(parsed[1]).toMatchObject({ name: '醤油', quantity: 2, unit: '大さじ' });
+    expect(parsed[2]).toMatchObject({ name: 'みりん', quantity: 1, unit: '大さじ' });
+    expect(parsed[3]).toMatchObject({ name: '塩', quantity: null, unit: '少々' });
+  });
+
+  it('handles multiline text correctly', () => {
+    const text = `鶏もも肉 300g\n醤油 大さじ2\n砂糖 小さじ1`;
+    const parsed = parseRecipe(text);
+    expect(parsed).toHaveLength(3);
+    expect(parsed[0]).toMatchObject({ name: '鶏もも肉', quantity: 300, unit: 'g' });
+    expect(parsed[1]).toMatchObject({ name: '醤油', quantity: 2, unit: '大さじ' });
+    expect(parsed[2]).toMatchObject({ name: '砂糖', quantity: 1, unit: '小さじ' });
   });
 });
 

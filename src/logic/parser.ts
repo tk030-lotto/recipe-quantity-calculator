@@ -111,10 +111,32 @@ export function parseIngredientLine(line: string): Ingredient {
   };
 }
 
+export function splitRecipeText(text: string): string[] {
+  if (!text) return [];
+  // 改行、読点、カンマ、中黒、セミコロンで分割
+  const rawSegments = text
+    .split(/[\r\n,、・;；]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const result: string[] = [];
+  // 分量・単位・非数値表現の直後のスペースで複数材料を分割
+  const splitRegex = /(?<=\d|g|ml|cc|カップ|kg|l|L|個|本|束|丁|切れ|枚|かけ|片|袋|缶|房|玉|尾|滴|杯|把|株|粒|パック|瓶|少々|適量|お好みで|適宜|ひとつまみ)\s+(?=[^\s0-9])/i;
+
+  for (const segment of rawSegments) {
+    const parts = segment.split(splitRegex);
+    for (const part of parts) {
+      const trimmed = part.trim();
+      if (trimmed) {
+        result.push(trimmed);
+      }
+    }
+  }
+
+  return result;
+}
+
 export function parseRecipe(text: string): Ingredient[] {
-  return text.split('\n')
-    .map(line => line.trim())
-    .filter(line => line !== '')
-    .map(parseIngredientLine);
+  return splitRecipeText(text).map(parseIngredientLine);
 }
 

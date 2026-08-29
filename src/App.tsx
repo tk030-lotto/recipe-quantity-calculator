@@ -114,16 +114,16 @@ function App() {
           <ModeToggle />
         </div>
 
-        <CardHeader className="bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100/50 dark:border-orange-900/50 pb-6 rounded-t-xl relative">
-          <CardTitle className="text-2xl font-bold text-orange-600 dark:text-orange-400 text-center flex items-center justify-center gap-2 mt-4 sm:mt-0">
-            🍳 CookScale
+        <CardHeader className="bg-orange-50 dark:bg-orange-950/30 border-b border-orange-100/50 dark:border-orange-900/50 py-3.5 px-6 rounded-t-xl relative">
+          <CardTitle className="text-lg font-bold text-orange-600 dark:text-orange-400 text-center flex items-center justify-center gap-2">
+            🍳 料理分量らくらく計算
           </CardTitle>
-          <CardDescription className="text-center text-orange-800/70 dark:text-orange-200/70 mt-2">
-            レシピの分量を一発で再計算・計量しやすい形へ！
+          <CardDescription className="text-center text-xs text-orange-800/70 dark:text-orange-200/70 mt-0.5">
+            レシピの分量を一括で再計算・計量しやすい形へ変換
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="space-y-6 pt-6">
+        <CardContent className="space-y-6 pt-5">
           {/* お気に入りリストコンポーネント */}
           <FavoritesList
             favorites={favorites}
@@ -131,10 +131,10 @@ function App() {
             onDelete={handleDeleteFavorite}
           />
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="recipe" className="font-bold text-slate-700 dark:text-slate-300">
-                レシピ（材料と分量）を貼り付け
+                レシピ（材料と分量）を入力
               </Label>
               <div className="flex items-center gap-2">
                 {recipeText && (
@@ -166,10 +166,13 @@ function App() {
             <Textarea
               id="recipe"
               placeholder={`鶏もも肉 300g\n醤油 大さじ2\nみりん 大さじ1\n塩 少々`}
-              className="min-h-[150px] resize-y bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-orange-300 dark:focus:border-orange-700 focus:ring-orange-200 dark:focus:ring-orange-900/50"
+              className="min-h-[140px] resize-y bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-orange-300 dark:focus:border-orange-700 focus:ring-orange-200 dark:focus:ring-orange-900/50"
               value={recipeText}
               onChange={(e) => setRecipeText(e.target.value)}
             />
+            <p className="text-xs text-slate-500 dark:text-slate-400 pl-0.5">
+              💡 書き方例: 鶏肉 300g / 醤油 大さじ2 / 卵 2個 / 塩 少々（1行ずつ、またはスペース・読点区切りで入力）
+            </p>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
