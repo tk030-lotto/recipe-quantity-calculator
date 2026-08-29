@@ -1,4 +1,4 @@
-import { Ingredient } from "./types";
+import type { Ingredient } from "./types";
 
 export function formatIngredient(ingredient: Ingredient): string {
   if (!ingredient.isConvertible || ingredient.quantity === null) {

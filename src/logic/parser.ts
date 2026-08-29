@@ -1,4 +1,4 @@
-import { Ingredient } from "./types";
+import type { Ingredient } from "./types";
 
 export function parseIngredientLine(line: string): Ingredient {
   const trimmed = line.trim();

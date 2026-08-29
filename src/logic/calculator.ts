@@ -1,4 +1,4 @@
-import { Ingredient } from "./types";
+import type { Ingredient } from "./types";
 
 export function calculateScale(originalServings: number, targetServings: number): number {
   if (originalServings <= 0) return 1;
