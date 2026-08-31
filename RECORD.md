@@ -202,7 +202,7 @@
   - 購入者がWindows上で即時起動可能なローカル配信用パッケージングスクリプト `build_booth.cjs` を実装。
   - `package.json` に `npm run package:booth` スクリプトを追加。
   - `.gitignore` に生成物ディレクトリ `booth_release` を追加。
-  - Shift-JIS形式の `ツール起動.bat`（PowerShellローカルHTTPサーバーによるワンクリック起動）、`はじめにお読みください.txt`、`LICENSE.txt`、ビルド済み静的ファイル群（`app/`）を含む配布用ZIP（`booth_release/料理分量らくらく計算ツール_v1.0.0.zip`）を生成・検証。
+  - `ツール起動.bat`（%~dp0対応のPowerShellローカルHTTPサーバーによるワンクリック起動 / Shift-JIS形式）、`はじめにお読みください.txt`（UTF-8形式）、`LICENSE.txt`、ビルド済み静的ファイル群（`app/`）を含む配布用ZIP（`booth_release/料理分量らくらく計算ツール_v1.0.0.zip`）を生成・検証。
 - **関連コミット**:
   - （本コミット）
 

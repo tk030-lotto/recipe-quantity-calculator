@@ -37,9 +37,10 @@ try {
   console.log('[3/5] LICENSE.txt の配置...');
   fs.copyFileSync(path.join(rootDir, 'LICENSE'), path.join(targetDir, 'LICENSE.txt'));
 
-  console.log('[4/5] ツール起動.bat および はじめにお読みください.txt の生成 (Shift-JIS)...');
+  console.log('[4/5] ツール起動.bat (Shift-JIS) および はじめにお読みください.txt (UTF-8) の生成...');
 
   const batContent = `@echo off
+setlocal
 chcp 932 >nul
 title 料理分量らくらく計算ツール
 
@@ -51,7 +52,7 @@ echo ブラウザが自動的に開きます。
 echo 終了する場合は、このウィンドウを閉じるか [Ctrl+C] を押してください。
 echo.
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$port = 8192; $root = Join-Path $PSScriptRoot 'app'; if (-not (Test-Path $root)) { $root = $PSScriptRoot }; $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add(\\"http://localhost:$port/\\"); try { $listener.Start() } catch { $port = 8193; $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add(\\"http://localhost:$port/\\"); $listener.Start(); }; Start-Process \\"http://localhost:$port/\\"; while ($listener.IsListening) { $context = $listener.GetContext(); $reqPath = $context.Request.Url.LocalPath.TrimStart('/'); if ([string]::IsNullOrEmpty($reqPath) -or $reqPath -eq '/') { $reqPath = 'index.html' }; $filePath = Join-Path $root $reqPath; if (Test-Path $filePath -PathType Leaf) { $bytes = [System.IO.File]::ReadAllBytes($filePath); $ext = [System.IO.Path]::GetExtension($filePath).ToLower(); $mime = switch ($ext) { '.html' { 'text/html; charset=utf-8' } '.js' { 'application/javascript; charset=utf-8' } '.css' { 'text/css; charset=utf-8' } '.svg' { 'image/svg+xml' } '.png' { 'image/png' } '.gif' { 'image/gif' } '.json' { 'application/json' } default { 'application/octet-stream' } }; $context.Response.ContentType = $mime; $context.Response.ContentLength64 = $bytes.Length; $context.Response.OutputStream.Write($bytes, 0, $bytes.Length); } else { $context.Response.StatusCode = 404; }; $context.Response.OutputStream.Close(); }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$app = '%~dp0app'; if (-not (Test-Path $app)) { $app = '%~dp0' }; $port = 8192; $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add(\\"http://localhost:$port/\\"); try { $listener.Start(); } catch { $port = 8193; $listener = New-Object System.Net.HttpListener; $listener.Prefixes.Add(\\"http://localhost:$port/\\"); $listener.Start(); }; Start-Process \\"http://localhost:$port/\\"; while ($listener.IsListening) { $ctx = $listener.GetContext(); $req = $ctx.Request.Url.LocalPath.TrimStart('/'); if ([string]::IsNullOrEmpty($req) -or $req -eq '/') { $req = 'index.html'; }; $f = Join-Path $app $req; if (Test-Path $f -PathType Leaf) { $b = [System.IO.File]::ReadAllBytes($f); $ext = [System.IO.Path]::GetExtension($f).ToLower(); $m = switch ($ext) { '.html' { 'text/html; charset=utf-8' } '.js' { 'application/javascript; charset=utf-8' } '.css' { 'text/css; charset=utf-8' } '.svg' { 'image/svg+xml' } '.png' { 'image/png' } '.gif' { 'image/gif' } '.json' { 'application/json' } default { 'application/octet-stream' } }; $ctx.Response.ContentType = $m; $ctx.Response.ContentLength64 = $b.Length; $ctx.Response.OutputStream.Write($b, 0, $b.Length); } else { $ctx.Response.StatusCode = 404; }; $ctx.Response.OutputStream.Close(); }"
 `;
 
   const readmeContent = `======================================================================
@@ -110,36 +111,27 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "$port = 8192; $root = Jo
 ======================================================================
 `;
 
-  // Write temporary files in UTF-8
-  const tempBatPath = path.join(releaseDir, 'temp_bat.txt');
-  const tempReadmePath = path.join(releaseDir, 'temp_readme.txt');
-  fs.writeFileSync(tempBatPath, batContent, 'utf8');
-  fs.writeFileSync(tempReadmePath, readmeContent, 'utf8');
-
-  const finalBatPath = path.join(targetDir, 'ツール起動.bat');
+  // 1. はじめにお読みください.txt (UTF-8 with BOM for universal Notepad compatibility)
   const finalReadmePath = path.join(targetDir, 'はじめにお読みください.txt');
+  fs.writeFileSync(finalReadmePath, '\uFEFF' + readmeContent, 'utf8');
 
-  // Convert to Shift-JIS (CP932) via PowerShell script with BOM
+  // 2. ツール起動.bat (Shift-JIS / CP932 via PowerShell)
+  const tempBatPath = path.join(releaseDir, 'temp_bat.txt');
+  fs.writeFileSync(tempBatPath, batContent, 'utf8');
+  const finalBatPath = path.join(targetDir, 'ツール起動.bat');
+
   const convertScript = `
     $sjis = [System.Text.Encoding]::GetEncoding(932);
     $utf8 = [System.Text.Encoding]::UTF8;
-    
     $batText = [System.IO.File]::ReadAllText('${tempBatPath.replace(/\\/g, '\\\\')}', $utf8);
     [System.IO.File]::WriteAllText('${finalBatPath.replace(/\\/g, '\\\\')}', $batText, $sjis);
-    
-    $readmeText = [System.IO.File]::ReadAllText('${tempReadmePath.replace(/\\/g, '\\\\')}', $utf8);
-    [System.IO.File]::WriteAllText('${finalReadmePath.replace(/\\/g, '\\\\')}', $readmeText, $sjis);
   `;
-
   const scriptWithBom = '\uFEFF' + convertScript;
   const tempPs1Path = path.join(releaseDir, 'convert.ps1');
   fs.writeFileSync(tempPs1Path, scriptWithBom, 'utf8');
-
   execSync(`powershell -NoProfile -ExecutionPolicy Bypass -File "${tempPs1Path}"`, { stdio: 'inherit' });
 
-  // Cleanup temp files
   fs.rmSync(tempBatPath, { force: true });
-  fs.rmSync(tempReadmePath, { force: true });
   fs.rmSync(tempPs1Path, { force: true });
 
   console.log('[5/5] ZIPアーカイブの生成...');
@@ -149,7 +141,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "$port = 8192; $root = Jo
   const zipScriptWithBom = '\uFEFF' + zipScript;
   const tempZipPs1Path = path.join(releaseDir, 'zip.ps1');
   fs.writeFileSync(tempZipPs1Path, zipScriptWithBom, 'utf8');
-
   execSync(`powershell -NoProfile -ExecutionPolicy Bypass -File "${tempZipPs1Path}"`, { stdio: 'inherit' });
   fs.rmSync(tempZipPs1Path, { force: true });
 
