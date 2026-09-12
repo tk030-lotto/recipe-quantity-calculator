@@ -242,7 +242,21 @@
   - **Suggestion (Fast Refresh)**: `theme-context.ts` を新設して Context と `useTheme` を分離、`button.tsx` の不要エクスポートを整理し、Oxlint警告を 0 件（エラー0・警告0）に解消。
   - **セキュリティ**: `npm audit` で脆弱性ゼロ（0 vulnerabilities）を確認。単体テスト（18 passed）およびビルド（tsc + vite）の完全成功を検証。
 - **関連コミット**:
+  - `e793217` (`fix: address all code review findings (Q-01 to Q-06, suggestions) and save report`)
+
+### 2026-09-12: AI行動規範・プロトコルの同期（第9条 記事ネタ蓄積規約の更新）
+- **変更・実装内容**:
+  - `knowledge/protocol.md`、`.agents/AGENTS.md`、および `.agents/agents/context-archivist.md` を最新の全体正本と同期。
+  - プロトコル第9条に「RECORD.md更新時の記事ネタ・発信知見蓄積」規約を反映。
+  - 各種AIツール設定ファイル（`.cursorrules`, `.clauderules` 等）のタイムスタンプ・状態を同期。
+- **技術的決定・背景**:
+  - 開発プロセスで得られた知見や試行錯誤（文字コードのShift-JIS/CRLF問題やViteでのFast Refresh対応など）を、将来的な技術記事や外部発信資産としてスムーズに還元・再利用可能にするため。
+- **📝 記事ネタ・発信知見**:
+  - 「Windows用バッチファイル作成で絶対に踏む文字化けとCRLFの罠：PowerShell経由で安全にCP932を生成する技法」
+  - 「Vite SPA開発でTailwind設定が欠落した時のトラブルシュートと、Fast Refresh警告をゼロにするContext/Hookの分離パターン」
+- **関連コミット**:
   - （本コミット）
+
 
 
 
