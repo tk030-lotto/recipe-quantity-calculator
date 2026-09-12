@@ -221,7 +221,17 @@
   - Node.js有無の検証、初回依存関係自動インストール、Vite開発サーバーおよびブラウザ自動起動（`npm run dev -- --open`）を実装。
   - 破損していた `node_modules` のクリーンインストールを実施し、`vite.cmd` の復旧および単体テスト（18件全PASS）とプロダクションビルドの正常動作を確認。
 - **関連コミット**:
+  - `257100f` (`feat: add ツール起動.bat based on standard specification`)
+
+### 2026-09-12: Tailwind CSSおよびPostCSS設定ファイルの復元
+- **変更概要**:
+  - 過去のコミットで誤削除されていた `tailwind.config.js` および `postcss.config.js` をGit履歴から復元。
+  - Shadcn UIおよびTailwind CSSの全スタイル定義が正しく適用される状態を回復。
+  - プロダクションビルド（`npm run build`）にて完全なCSSアセット（20.95 kB）が生成されること、および単体テスト（18 passed）を確認。
+- **関連コミット**:
   - （本コミット）
+
+
 
 
 
