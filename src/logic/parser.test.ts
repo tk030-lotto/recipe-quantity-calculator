@@ -29,9 +29,14 @@ describe('parseIngredientLine', () => {
     expect(parseIngredientLine('豚肉')).toMatchObject({ isConvertible: false });
   });
 
-  it('handles uppercase units and cc', () => {
-    expect(parseIngredientLine('出汁 300CC')).toMatchObject({ name: '出汁', quantity: 300, unit: 'CC', isConvertible: true });
+  it('normalizes uppercase units and cc to standard units', () => {
+    expect(parseIngredientLine('出汁 300CC')).toMatchObject({ name: '出汁', quantity: 300, unit: 'ml', isConvertible: true });
+    expect(parseIngredientLine('水 200cc')).toMatchObject({ name: '水', quantity: 200, unit: 'ml', isConvertible: true });
+    expect(parseIngredientLine('牛乳 150ML')).toMatchObject({ name: '牛乳', quantity: 150, unit: 'ml', isConvertible: true });
+    expect(parseIngredientLine('水 1l')).toMatchObject({ name: '水', quantity: 1, unit: 'L', isConvertible: true });
     expect(parseIngredientLine('水 1L')).toMatchObject({ name: '水', quantity: 1, unit: 'L', isConvertible: true });
+    expect(parseIngredientLine('小麦粉 1KG')).toMatchObject({ name: '小麦粉', quantity: 1, unit: 'kg', isConvertible: true });
+    expect(parseIngredientLine('砂糖 100G')).toMatchObject({ name: '砂糖', quantity: 100, unit: 'g', isConvertible: true });
   });
 
   it('handles fraction quantities', () => {
@@ -40,8 +45,9 @@ describe('parseIngredientLine', () => {
     expect(parseIngredientLine('玉ねぎ 1/2 個')).toMatchObject({ name: '玉ねぎ', quantity: 0.5, unit: '個', isConvertible: true });
   });
 
-  it('handles fullwidth numbers and spaces', () => {
-    expect(parseIngredientLine('鶏もも肉　３００ｇ')).toMatchObject({ name: '鶏もも肉', quantity: 300, unit: 'ｇ', isConvertible: true });
+  it('handles fullwidth numbers, letters, and spaces', () => {
+    expect(parseIngredientLine('鶏もも肉　３００ｇ')).toMatchObject({ name: '鶏もも肉', quantity: 300, unit: 'g', isConvertible: true });
+    expect(parseIngredientLine('出汁　２００ｃｃ')).toMatchObject({ name: '出汁', quantity: 200, unit: 'ml', isConvertible: true });
     expect(parseIngredientLine('砂糖　大さじ２')).toMatchObject({ name: '砂糖', quantity: 2, unit: '大さじ', isConvertible: true });
   });
 });

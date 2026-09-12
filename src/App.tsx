@@ -35,6 +35,7 @@ function App() {
     }
   }, [favorites]);
 
+  // 計算ロジック（純粋関数群）を実行。favoritesの状態変化は計算結果に影響しないため依存配列から意図的に除外
   const results = useMemo(() => {
     const orig = typeof originalServings === 'number' && originalServings > 0 ? originalServings : 1;
     const targ = typeof targetServings === 'number' && targetServings > 0 ? targetServings : 1;
@@ -183,6 +184,7 @@ function App() {
                   id="originalServings"
                   type="number"
                   min="1"
+                  placeholder="1"
                   className="pr-8 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
                   value={originalServings}
                   onChange={(e) => {
@@ -208,6 +210,7 @@ function App() {
                   id="targetServings"
                   type="number"
                   min="1"
+                  placeholder="1"
                   className="pr-8 bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800 font-bold text-orange-700 dark:text-orange-300 focus:border-orange-400 dark:focus:border-orange-600 focus:ring-orange-300 dark:focus:ring-orange-900"
                   value={targetServings}
                   onChange={(e) => {

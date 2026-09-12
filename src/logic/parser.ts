@@ -19,6 +19,7 @@ function parseNumericValue(valueStr: string): number | null {
 export function parseIngredientLine(line: string): Ingredient {
   const normalized = line
     .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+    .replace(/[ａ-ｚＡ-Ｚ]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
     .replace(/　/g, ' ')
     .replace(/／/g, '/')
     .replace(/．/g, '.')
@@ -73,12 +74,23 @@ export function parseIngredientLine(line: string): Ingredient {
   if (match) {
     const quantity = parseNumericValue(match[2]);
     if (quantity !== null) {
+      let unit = match[3];
+      const lower = unit.toLowerCase();
+      if (lower === "cc" || lower === "ml") {
+        unit = "ml";
+      } else if (lower === "l") {
+        unit = "L";
+      } else if (lower === "g") {
+        unit = "g";
+      } else if (lower === "kg") {
+        unit = "kg";
+      }
       return {
         id,
         originalText: normalized,
         name: (match[1] + " " + match[4]).trim(),
         quantity,
-        unit: match[3],
+        unit,
         isConvertible: true
       };
     }

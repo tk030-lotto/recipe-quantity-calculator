@@ -229,7 +229,21 @@
   - Shadcn UIおよびTailwind CSSの全スタイル定義が正しく適用される状態を回復。
   - プロダクションビルド（`npm run build`）にて完全なCSSアセット（20.95 kB）が生成されること、および単体テスト（18 passed）を確認。
 - **関連コミット**:
+  - `6172ca9` (`fix(style): restore tailwind.config.js and postcss.config.js`)
+
+### 2026-09-12: 独立コードレビュー指摘事項（Q-01〜Q-06, Suggestion）の全件修正
+- **変更概要**:
+  - `docs/code-review-report.md` にレビュー報告書を永続保存。
+  - **Q-03 (単位正規化)**: `parser.ts` にて `cc` / `CC` を `ml` に、`l` を `L` に正規化。全角英字（`ｇ`, `ｃｃ` 等）も半角へ正規化。単体テストを拡充。
+  - **Q-01 (助数詞仕様)**: `SPECIFICATION(7).md` および `README.md` に、助数詞単位（個・本・枚等）は分割表現をせず「数値＋助数詞」の小数丸め表示とする仕様を明記。
+  - **Q-04 (UX改善)**: `App.tsx` の人数入力欄に `placeholder="1"` を追加し、空欄時に1人分として計算される挙動を視覚的に明示。
+  - **Q-05 (可読性)**: `App.tsx` の `useMemo` 依存配列の意図コメントを追記。
+  - **Q-06 (テーマ自動追従)**: `theme-provider.tsx` にて `matchMedia` リスナーを追加し、システムテーマ変更へのリアルタイム自動追従を実装。
+  - **Suggestion (Fast Refresh)**: `theme-context.ts` を新設して Context と `useTheme` を分離、`button.tsx` の不要エクスポートを整理し、Oxlint警告を 0 件（エラー0・警告0）に解消。
+  - **セキュリティ**: `npm audit` で脆弱性ゼロ（0 vulnerabilities）を確認。単体テスト（18 passed）およびビルド（tsc + vite）の完全成功を検証。
+- **関連コミット**:
   - （本コミット）
+
 
 
 
