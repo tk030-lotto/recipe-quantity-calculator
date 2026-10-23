@@ -46,4 +46,6 @@ GEMINI.md
 
 # 開発ドキュメント除外（フェーズ2-B）
 docs/code-review-report.md
-`n# 仕様書除外（フェーズ2-C-β）`nSPECIFICATION*.md
+
+# 仕様書除外（フェーズ2-C-β）
+SPECIFICATION*.md
