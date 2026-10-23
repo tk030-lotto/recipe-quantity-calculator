@@ -43,3 +43,6 @@ GEMINI.md
 
 # Tests
 *.test.ts
+
+# 開発ドキュメント除外（フェーズ2-B）
+docs/code-review-report.md
